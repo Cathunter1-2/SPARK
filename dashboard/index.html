@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KrishiSense — Open Soil Health Network</title>
+  <meta name="description" content="Real-time soil health monitoring dashboard for India's open agricultural innovation network." />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- ─── Ambient Background Blobs ─── -->
+  <div class="ambient-bg">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+
+  <!-- ─── Header ─── -->
+  <header class="header">
+    <div class="header-left">
+      <div class="logo">
+        <div class="logo-icon">
+          <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 4C20 4 8 14 8 24C8 30.627 13.373 36 20 36C26.627 36 32 30.627 32 24C32 14 20 4 20 4Z" fill="url(#leaf-grad)" opacity="0.9"/>
+            <path d="M20 12V28M14 20H26" stroke="white" stroke-width="2" stroke-linecap="round"/>
+            <defs>
+              <linearGradient id="leaf-grad" x1="8" y1="4" x2="32" y2="36">
+                <stop stop-color="#34d399"/>
+                <stop offset="1" stop-color="#059669"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div>
+          <h1 class="logo-text">KrishiSense</h1>
+          <p class="logo-subtitle">Open Soil Health Network</p>
+        </div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="connection-status" id="connectionStatus">
+        <span class="status-dot disconnected"></span>
+        <span class="status-text">Disconnected</span>
+      </div>
+      <button class="btn btn-connect" id="btnConnect" onclick="connectArduino()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+        Connect Arduino
+      </button>
+      <button class="btn btn-demo" id="btnDemo" onclick="toggleDemo()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Demo Mode
+      </button>
+    </div>
+  </header>
+
+  <!-- ─── Main Dashboard ─── -->
+  <main class="dashboard">
+
+    <!-- ─── Sensor Cards Row ─── -->
+    <section class="sensor-cards">
+      <!-- Moisture Card -->
+      <div class="card sensor-card moisture-card" id="moistureCard">
+        <div class="card-header">
+          <div class="card-icon moisture-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+          </div>
+          <div class="card-label">Soil Moisture</div>
+        </div>
+        <div class="card-value">
+          <span class="value-number" id="moistureValue">--</span>
+          <span class="value-unit">%</span>
+        </div>
+        <div class="card-gauge">
+          <div class="gauge-track">
+            <div class="gauge-fill moisture-fill" id="moistureFill" style="width: 0%"></div>
+          </div>
+          <div class="gauge-labels">
+            <span>Dry</span>
+            <span>Ideal: 30-60%</span>
+            <span>Wet</span>
+          </div>
+        </div>
+        <div class="card-trend" id="moistureTrend">
+          <span class="trend-label">Waiting for data...</span>
+        </div>
+      </div>
+
+      <!-- Temperature Card -->
+      <div class="card sensor-card temp-card" id="tempCard">
+        <div class="card-header">
+          <div class="card-icon temp-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>
+          </div>
+          <div class="card-label">Temperature</div>
+        </div>
+        <div class="card-value">
+          <span class="value-number" id="tempValue">--</span>
+          <span class="value-unit">°C</span>
+        </div>
+        <div class="card-gauge">
+          <div class="gauge-track">
+            <div class="gauge-fill temp-fill" id="tempFill" style="width: 0%"></div>
+          </div>
+          <div class="gauge-labels">
+            <span>Cold</span>
+            <span>Ideal: 20-35°C</span>
+            <span>Hot</span>
+          </div>
+        </div>
+        <div class="card-trend" id="tempTrend">
+          <span class="trend-label">Waiting for data...</span>
+        </div>
+      </div>
+
+      <!-- Humidity Card -->
+      <div class="card sensor-card humidity-card" id="humidityCard">
+        <div class="card-header">
+          <div class="card-icon humidity-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/><path d="M6 14h12" stroke-dasharray="2 2"/></svg>
+          </div>
+          <div class="card-label">Humidity</div>
+        </div>
+        <div class="card-value">
+          <span class="value-number" id="humidityValue">--</span>
+          <span class="value-unit">%</span>
+        </div>
+        <div class="card-gauge">
+          <div class="gauge-track">
+            <div class="gauge-fill humidity-fill" id="humidityFill" style="width: 0%"></div>
+          </div>
+          <div class="gauge-labels">
+            <span>Arid</span>
+            <span>Ideal: 40-70%</span>
+            <span>Humid</span>
+          </div>
+        </div>
+        <div class="card-trend" id="humidityTrend">
+          <span class="trend-label">Waiting for data...</span>
+        </div>
+      </div>
+
+      <!-- Health Score Card -->
+      <div class="card sensor-card health-card" id="healthCard">
+        <div class="card-header">
+          <div class="card-icon health-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          </div>
+          <div class="card-label">Soil Health Score</div>
+        </div>
+        <div class="health-score-ring">
+          <svg viewBox="0 0 120 120" class="score-svg">
+            <circle cx="60" cy="60" r="50" stroke="rgba(255,255,255,0.08)" stroke-width="10" fill="none"/>
+            <circle cx="60" cy="60" r="50" id="scoreRing" class="score-ring" stroke-width="10" fill="none"
+              stroke-dasharray="314.16" stroke-dashoffset="314.16" stroke-linecap="round"/>
+          </svg>
+          <div class="score-center">
+            <span class="score-number" id="healthValue">--</span>
+            <span class="score-label" id="healthStatus">NO DATA</span>
+          </div>
+        </div>
+        <div class="health-recommendation" id="healthRecommendation">
+          Connect a sensor or start demo mode to begin monitoring.
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── Charts Row ─── -->
+    <section class="charts-row">
+      <!-- Live Time-Series Chart -->
+      <div class="card chart-card">
+        <div class="card-header">
+          <div class="card-label">📈 Live Sensor Readings</div>
+          <div class="chart-controls">
+            <button class="chip chip-active" onclick="setChartRange(60, this)">1 min</button>
+            <button class="chip" onclick="setChartRange(300, this)">5 min</button>
+            <button class="chip" onclick="setChartRange(900, this)">15 min</button>
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas id="liveChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Health History Chart -->
+      <div class="card chart-card chart-card-sm">
+        <div class="card-header">
+          <div class="card-label">🏥 Health Score History</div>
+        </div>
+        <div class="chart-container">
+          <canvas id="healthChart"></canvas>
+        </div>
+        <div class="stats-row">
+          <div class="stat">
+            <span class="stat-label">Avg</span>
+            <span class="stat-value" id="statAvg">--</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Min</span>
+            <span class="stat-value" id="statMin">--</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Max</span>
+            <span class="stat-value" id="statMax">--</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Samples</span>
+            <span class="stat-value" id="statSamples">0</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── Farm Network Map + Alerts ─── -->
+    <section class="bottom-row">
+      <!-- Farm Network Map -->
+      <div class="card map-card">
+        <div class="card-header">
+          <div class="card-label">🗺️ Farm Network — Maharashtra (Simulated)</div>
+          <div class="node-count">
+            <span class="pulse-dot"></span>
+            <span id="activeNodes">6</span> Active Nodes
+          </div>
+        </div>
+        <div class="map-container" id="farmMap">
+          <!-- SVG map rendered by JS -->
+        </div>
+        <div class="map-legend">
+          <div class="legend-item"><span class="legend-dot good"></span> Good (75-100)</div>
+          <div class="legend-item"><span class="legend-dot moderate"></span> Moderate (50-74)</div>
+          <div class="legend-item"><span class="legend-dot poor"></span> Poor (25-49)</div>
+          <div class="legend-item"><span class="legend-dot critical"></span> Critical (0-24)</div>
+        </div>
+      </div>
+
+      <!-- Alert Feed -->
+      <div class="card alert-card">
+        <div class="card-header">
+          <div class="card-label">🔔 Alert Feed</div>
+          <button class="chip" onclick="clearAlerts()">Clear</button>
+        </div>
+        <div class="alert-feed" id="alertFeed">
+          <div class="alert-empty">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            <p>No alerts yet. Monitoring will begin when sensors are active.</p>
+          </div>
+        </div>
+
+        <!-- Open Data API Section -->
+        <div class="api-section">
+          <div class="api-header">
+            <span class="card-label">📡 Open Data API</span>
+            <span class="api-badge">OPEN SOURCE</span>
+          </div>
+          <div class="api-endpoint">
+            <code>GET /api/v1/soil-health/{node_id}</code>
+          </div>
+          <div class="api-stats">
+            <div class="stat">
+              <span class="stat-label">Total Readings</span>
+              <span class="stat-value" id="apiReadings">0</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">Uptime</span>
+              <span class="stat-value" id="apiUptime">00:00</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ─── Footer ─── -->
+  <footer class="footer">
+    <p>KrishiSense v1.0 — Built for Open Innovation Ideathon 2026</p>
+    <p class="footer-sub">Open-source soil health monitoring for Indian agriculture 🇮🇳</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
