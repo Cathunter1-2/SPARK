@@ -1,4 +1,4 @@
-# 📊 AI Presentation Generation Prompt — OpenSoil
+# 📊 AI Presentation Generation Prompt — KrishiSense
 
 > **Instructions for use:** Copy the prompt block below and paste it into any AI presentation generator (like Gamma, Canva, ChatGPT, or Claude) to generate your 10-slide deck.
 
@@ -6,14 +6,14 @@
 
 ## The Prompt
 
-**Topic:** OpenSoil - Open Soil Health Monitoring Network
+**Topic:**  Open Soil Health Monitoring Network
 **Goal:** Create a 10-slide pitch deck for an open innovation ideathon. 
 **Aesthetic Theme:** Clean, modern, and data-driven. Dark theme (slate/navy background like #0f172a) with vibrant green (#4ade80) and earth-tone gold (#fbbf24) accents. Use glassmorphism effects for cards and minimal text per slide. High-contrast typography using Inter or Outfit fonts.
 
 Please generate a 10-slide presentation using the following structure, content, and speaker notes:
 
 ### Slide 1: Title Slide
-*   **Title:** OpenSoil
+*   **Title:** KrishiSense
 *   **Subtitle:** Open Soil Health Monitoring Network
 *   **Tagline:** Real-time soil intelligence. ₹80 per node. Open for all.
 *   **Visual Elements:** Subtle topographic map pattern in the background. Glowing pulse dots representing sensor nodes.
@@ -33,14 +33,14 @@ Please generate a 10-slide presentation using the following structure, content, 
 *   **Conclusion:** India has no real-time, ultra-affordable, open monitoring system.
 *   **Speaker Notes:** "Existing solutions don't work for the 86% of farmers who own less than one hectare. Government cards are free but take months to arrive. Commercial IoT platforms cost upwards of ₹15,000 a year. There is a massive gap for a real-time, ultra-affordable solution."
 
-### Slide 4: Introducing OpenSoil
+### Slide 4: Introducing KrishiSense
 *   **Headline:** The ₹80 Soil Scientist
 *   **Three Pillars:** 
     1.  *Ultra-Cheap Hardware:* ₹80 sensor node measuring moisture, temp, and humidity.
     2.  *Live Dashboard:* Zero-literacy visual health scores and alerts.
     3.  *Open Ecosystem:* Open-source hardware and open data API.
 *   **Visual:** Side-by-side of the physical hardware node and the clean web dashboard.
-*   **Speaker Notes:** "Enter OpenSoil. It’s an ₹80 sensor node—less than the cost of a bag of fertilizer. It connects to a live dashboard that translates complex data into simple colors: Green means good, Red means act now. And most importantly, it is completely open-source."
+*   **Speaker Notes:** "Enter KrishiSense. It’s an ₹80 sensor node—less than the cost of a bag of fertilizer. It connects to a live dashboard that translates complex data into simple colors: Green means good, Red means act now. And most importantly, it is completely open-source."
 
 ### Slide 5: How It Works (The Science)
 *   **Headline:** Data to Action in 2 Seconds

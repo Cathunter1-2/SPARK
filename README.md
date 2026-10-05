@@ -1,4 +1,4 @@
-# OpenSoil — Open Soil Health Monitoring Network
+#  — Open Soil Health Monitoring Network
 
 > Real-time soil health monitoring for Indian agriculture 🇮🇳
 > Built for Open Innovation Ideathon 2026
@@ -108,7 +108,7 @@ Follow the circuit diagram above. Key notes:
 4. Upload!
 
 On boot, you should see:
-- LCD shows **"OpenSoil"** with a typing animation
+- LCD shows **""** with a typing animation
 - LEDs do a green → yellow → red → all-on sweep
 - LCD shows a loading bar, then "Sensors ready..."
 
@@ -273,7 +273,7 @@ When health is critical, an alert screen overrides the rotation.
 
 When you power on the Arduino, the prototype runs a polished startup sequence:
 
-1. **Typing animation** — "OpenSoil" appears letter by letter on the LCD
+1. **Typing animation** — "" appears letter by letter on the LCD
 2. **LED sweep** — Green → Yellow → Red → All on → All off
 3. **Loading bar** — 16-character progress bar fills across the LCD
 4. **Ready message** — "v2.0 ♥ OpenSrc / Sensors ready..."

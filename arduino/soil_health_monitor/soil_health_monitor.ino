@@ -41,7 +41,7 @@ void setup() {
 
   bootAnimation();
 
-  Serial.println("{\"event\":\"boot\",\"device\":\"OpenSoil-Node\",\"version\":\"2.0.0\"}");
+  Serial.println("{\"event\":\"boot\",\"device\":\"-Node\",\"version\":\"2.0.0\"}");
   delay(2000);
 }
 
