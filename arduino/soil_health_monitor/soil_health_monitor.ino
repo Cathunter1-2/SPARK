@@ -1,78 +1,48 @@
-/*
- * ============================================================
- *  KrishiSense — Open Soil Health Monitor
- *  Arduino R4 Minima Firmware
- * ============================================================
- *
- *  CIRCUIT CONNECTIONS:
- *  
- *  Capacitive Soil Moisture Sensor v1.2:
- *    VCC  → 3.3V (or 5V)
- *    GND  → GND
- *    AOUT → A0
- *
- *  DHT11 Temperature & Humidity Sensor:
- *    VCC  → 5V
- *    GND  → GND
- *    DATA → D2  (with 10K pull-up resistor to VCC)
- *
- *  LIBRARY REQUIRED:
- *    Install "DHT sensor library" by Adafruit via Arduino IDE
- *    Library Manager (Sketch → Include Library → Manage Libraries)
- *
- *  OUTPUT:
- *    Sends JSON over Serial (115200 baud) every 2 seconds:
- *    {"moisture":52.3,"temperature":28.5,"humidity":65.0,"health":78,"status":"good","ts":12345}
- *
- * ============================================================
- */
-
 #include <DHT.h>
 
-// ── Pin Definitions ──────────────────────────────────────────
-#define SOIL_MOISTURE_PIN   A0    // Analog pin for soil moisture sensor
-#define DHT_PIN             2     // Digital pin for DHT11 data
-#define DHT_TYPE            DHT11 // Sensor type
+#define SOIL_MOISTURE_PIN   A0
+#define DHT_PIN             2
+#define DHT_TYPE            DHT11
 
-// ── Calibration Values ───────────────────────────────────────
-// Adjust these based on YOUR sensor readings:
-//   - DRY_VALUE:  sensor reading when probe is in dry air
-//   - WET_VALUE:  sensor reading when probe is submerged in water
-#define DRY_VALUE           620   // Raw analog reading in dry air
-#define WET_VALUE           270   // Raw analog reading in water
+#define LED_GREEN           4
+#define LED_YELLOW          5
+#define LED_RED             6
 
-// ── Ideal Ranges for Health Scoring ──────────────────────────
+#define DRY_VALUE           1017
+#define WET_VALUE           200
+
 #define MOISTURE_IDEAL_LOW  30.0
 #define MOISTURE_IDEAL_HIGH 60.0
-
 #define TEMP_IDEAL_LOW      20.0
 #define TEMP_IDEAL_HIGH     35.0
-
 #define HUMIDITY_IDEAL_LOW  40.0
 #define HUMIDITY_IDEAL_HIGH 70.0
 
-// ── Timing ───────────────────────────────────────────────────
-#define READ_INTERVAL_MS    2000  // Read sensors every 2 seconds
+#define READ_INTERVAL_MS    2000
 
-// ── Objects ──────────────────────────────────────────────────
 DHT dht(DHT_PIN, DHT_TYPE);
 
-// ── Variables ────────────────────────────────────────────────
-unsigned long lastReadTime = 0;
-unsigned long sampleCount  = 0;
+unsigned long lastReadTime  = 0;
+unsigned long sampleCount   = 0;
+unsigned long ledBlinkTimer = 0;
+bool          ledBlinkState = false;
+String        lastStatus    = "unknown";
 
 void setup() {
   Serial.begin(115200);
-  while (!Serial) {
-    ; // Wait for serial connection (needed for R4 Minima)
-  }
+  unsigned long serialWait = millis();
+  while (!Serial && millis() - serialWait < 2000) { ; }
 
   dht.begin();
 
-  // Startup message
-  Serial.println("{\"event\":\"boot\",\"device\":\"KrishiSense-Node\",\"version\":\"1.0.0\"}");
+  pinMode(LED_GREEN, OUTPUT);
+  pinMode(LED_YELLOW, OUTPUT);
+  pinMode(LED_RED, OUTPUT);
 
-  delay(2000); // Let DHT11 stabilize
+  bootAnimation();
+
+  Serial.println("{\"event\":\"boot\",\"device\":\"OpenSoil-Node\",\"version\":\"2.0.0\"}");
+  delay(2000);
 }
 
 void loop() {
@@ -82,25 +52,19 @@ void loop() {
     lastReadTime = now;
     sampleCount++;
 
-    // ── Read Soil Moisture ─────────────────────────────────
     int rawMoisture = analogRead(SOIL_MOISTURE_PIN);
-    
-    // Map raw value to percentage (inverted: lower raw = wetter)
     float moisturePercent = mapFloat(rawMoisture, DRY_VALUE, WET_VALUE, 0.0, 100.0);
     moisturePercent = constrain(moisturePercent, 0.0, 100.0);
 
-    // ── Read DHT11 ────────────────────────────────────────
-    float temperature = dht.readTemperature();     // Celsius
-    float humidity    = dht.readHumidity();         // Percentage
+    float temperature = dht.readTemperature();
+    float humidity    = dht.readHumidity();
 
-    // Check for DHT read errors
     bool dhtError = isnan(temperature) || isnan(humidity);
     if (dhtError) {
       temperature = -1;
       humidity    = -1;
     }
 
-    // ── Calculate Health Score (0-100) ─────────────────────
     int healthScore = 0;
     String status   = "unknown";
 
@@ -109,7 +73,9 @@ void loop() {
       status = getStatus(healthScore);
     }
 
-    // ── Build and Send JSON ───────────────────────────────
+    lastStatus = status;
+    updateLEDs(status);
+
     Serial.print("{");
     Serial.print("\"moisture\":");     Serial.print(moisturePercent, 1);
     Serial.print(",\"moistureRaw\":"); Serial.print(rawMoisture);
@@ -122,37 +88,77 @@ void loop() {
     Serial.print(",\"ts\":");          Serial.print(now);
     Serial.println("}");
   }
+
+  handleLEDBlink(millis());
 }
 
-/*
- * Calculate a health score (0-100) based on how close
- * each reading is to its ideal range.
- * 
- * Weights: Moisture 50%, Temperature 25%, Humidity 25%
- */
+void bootAnimation() {
+  digitalWrite(LED_GREEN, HIGH);
+  delay(200);
+  digitalWrite(LED_GREEN, LOW);
+  digitalWrite(LED_YELLOW, HIGH);
+  delay(200);
+  digitalWrite(LED_YELLOW, LOW);
+  digitalWrite(LED_RED, HIGH);
+  delay(200);
+  digitalWrite(LED_GREEN, HIGH);
+  digitalWrite(LED_YELLOW, HIGH);
+  delay(400);
+  digitalWrite(LED_GREEN, LOW);
+  digitalWrite(LED_YELLOW, LOW);
+  digitalWrite(LED_RED, LOW);
+}
+
+void updateLEDs(String status) {
+  if (status == "good") {
+    digitalWrite(LED_GREEN, HIGH);
+    digitalWrite(LED_YELLOW, LOW);
+    digitalWrite(LED_RED, LOW);
+  }
+  else if (status == "moderate") {
+    digitalWrite(LED_GREEN, LOW);
+    digitalWrite(LED_YELLOW, HIGH);
+    digitalWrite(LED_RED, LOW);
+  }
+  else if (status == "poor" || status == "critical") {
+    digitalWrite(LED_GREEN, LOW);
+    digitalWrite(LED_YELLOW, LOW);
+  }
+  else {
+    digitalWrite(LED_GREEN, LOW);
+    digitalWrite(LED_YELLOW, LOW);
+    digitalWrite(LED_RED, LOW);
+  }
+}
+
+void handleLEDBlink(unsigned long now) {
+  if (lastStatus == "poor") {
+    if (now - ledBlinkTimer >= 500) {
+      ledBlinkTimer = now;
+      ledBlinkState = !ledBlinkState;
+      digitalWrite(LED_RED, ledBlinkState ? HIGH : LOW);
+    }
+  }
+  else if (lastStatus == "critical") {
+    if (now - ledBlinkTimer >= 125) {
+      ledBlinkTimer = now;
+      ledBlinkState = !ledBlinkState;
+      digitalWrite(LED_RED, ledBlinkState ? HIGH : LOW);
+    }
+  }
+}
+
 int calculateHealthScore(float moisture, float temp, float hum) {
   float moistureScore = rangeScore(moisture, MOISTURE_IDEAL_LOW, MOISTURE_IDEAL_HIGH);
   float tempScore     = rangeScore(temp, TEMP_IDEAL_LOW, TEMP_IDEAL_HIGH);
   float humScore      = rangeScore(hum, HUMIDITY_IDEAL_LOW, HUMIDITY_IDEAL_HIGH);
 
-  // Weighted average
   float totalScore = (moistureScore * 0.50) + (tempScore * 0.25) + (humScore * 0.25);
-
   return (int)(totalScore * 100.0);
 }
 
-/*
- * Returns a score from 0.0 to 1.0 based on how close
- * a value is to the ideal range [low, high].
- * 
- * - Inside the range        → 1.0
- * - Outside but close       → 0.5 - 0.99
- * - Far outside (>30 units) → 0.0
- */
 float rangeScore(float value, float low, float high) {
-  if (value >= low && value <= high) {
-    return 1.0;
-  }
+  if (value >= low && value <= high) return 1.0;
 
   float distance = 0;
   if (value < low) {
@@ -161,14 +167,10 @@ float rangeScore(float value, float low, float high) {
     distance = value - high;
   }
 
-  // Linearly decrease score over a 30-unit distance
   float score = 1.0 - (distance / 30.0);
   return max(score, 0.0f);
 }
 
-/*
- * Convert health score to human-readable status
- */
 String getStatus(int score) {
   if (score >= 75) return "good";
   if (score >= 50) return "moderate";
@@ -176,9 +178,6 @@ String getStatus(int score) {
   return "critical";
 }
 
-/*
- * Float version of Arduino's map() function
- */
 float mapFloat(float x, float inMin, float inMax, float outMin, float outMax) {
   return (x - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
 }

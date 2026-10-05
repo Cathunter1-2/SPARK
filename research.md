@@ -1,4 +1,4 @@
-# 🔬 Research Document — KrishiSense: Open Soil Health Monitoring Network
+# 🔬 Research Document — OpenSoil: Open Soil Health Monitoring Network
 
 > **Domain:** Open Innovation (India-Focused)  
 > **Event:** Open Innovation Ideathon 2026  
@@ -131,7 +131,7 @@ SOC is the single most important indicator of soil health — it determines wate
 > **The Soil Health Card is a snapshot. Farming needs a continuous video.**  
 > Soil conditions change daily — with rain, irrigation, temperature swings, microbial activity, and crop uptake. A test from 6 months ago tells you nothing about today.
 
-**This is the gap KrishiSense fills: always-on, real-time, field-level monitoring.**
+**This is the gap OpenSoil fills: always-on, real-time, field-level monitoring.**
 
 ---
 
@@ -161,17 +161,17 @@ India's soil crisis cannot be understood in isolation from its water crisis, bec
 | **Drip irrigation** | **~90%** | ~7–10% | Rapidly growing |
 | **IoT-guided precision irrigation** | **>90%** | <1% | Massive opportunity |
 
-**Connection to KrishiSense:** Real-time soil moisture data enables farmers to irrigate **only when needed** rather than on a fixed schedule. Even a 20% improvement in irrigation efficiency across India's 62 million hectares of irrigated farmland would save **~25–30 BCM** of water annually — equivalent to the annual water supply of a medium-sized state.
+**Connection to OpenSoil:** Real-time soil moisture data enables farmers to irrigate **only when needed** rather than on a fixed schedule. Even a 20% improvement in irrigation efficiency across India's 62 million hectares of irrigated farmland would save **~25–30 BCM** of water annually — equivalent to the annual water supply of a medium-sized state.
 
 ---
 
-## 3. The Solution — KrishiSense (Technical Deep-Dive)
+## 3. The Solution — OpenSoil (Technical Deep-Dive)
 
 ### 3.1 System Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                     KrishiSense Architecture                     │
+│                     OpenSoil Architecture                     │
 ├──────────────┬──────────────┬──────────────┬────────────────────┤
 │  SENSOR LAYER │  EDGE LAYER  │  TRANSPORT   │  APPLICATION LAYER │
 ├──────────────┼──────────────┼──────────────┼────────────────────┤
@@ -386,7 +386,7 @@ This format is designed for:
 
 ### 5.2 Competitive Positioning Matrix
 
-| Dimension | KrishiSense | CropIn | Fasal | Govt SHC | Manual Kits |
+| Dimension | OpenSoil | CropIn | Fasal | Govt SHC | Manual Kits |
 |-----------|:---:|:---:|:---:|:---:|:---:|
 | **Per-node hardware cost** | **₹80** | N/A (software) | ₹15K–30K | Free (lab) | ₹500+ |
 | **Real-time monitoring** | ✅ | ⚠️ (satellite) | ✅ | ❌ | ❌ |
@@ -429,7 +429,7 @@ This format is designed for:
 - 10% yield improvement (conservative): ~₹3,000/hectare additional income
 - Per FPO per season: **₹6,00,000 additional income**
 - **Total economic value per FPO per season: ~₹10 lakh**
-- **Cost of deploying 10 KrishiSense nodes: ₹800**
+- **Cost of deploying 10 OpenSoil nodes: ₹800**
 - **ROI: >1,000x**
 
 ### 6.2 Environmental Impact
@@ -444,7 +444,7 @@ This format is designed for:
 
 ### 6.3 Social Impact
 
-| Dimension | How KrishiSense Helps |
+| Dimension | How OpenSoil Helps |
 |-----------|----------------------|
 | **Information equity** | Gives smallholders (86%) access to precision data that was previously available only to large corporate farms |
 | **Gender inclusion** | Women manage ~80% of agricultural labor in India; visual dashboard with RAG scores requires no technical literacy |
@@ -539,7 +539,7 @@ This format is designed for:
 - 💧 Flood irrigation (80% of irrigated area) wastes **60–70%** of water
 
 ### The Solution
-- 🔧 KrishiSense node cost: **₹80 (~$1)**
+- 🔧 OpenSoil node cost: **₹80 (~$1)**
 - 🏭 Commercial alternatives: **₹15,000–30,000** (Fasal) or **$200–500+** (international)
 - 📊 Real-time data: moisture, temperature, humidity + composite health score
 - 🌐 Open-source: hardware + software + data API

@@ -1,5 +1,5 @@
 /* ============================================================
- *  KrishiSense — Dashboard Application Logic
+ *  OpenSoil — Dashboard Application Logic
  *  Open Soil Health Network
  * ============================================================ */
 
