@@ -14,6 +14,10 @@
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 
+  <!-- Leaflet Map -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -224,10 +228,10 @@
       <!-- Farm Network Map -->
       <div class="card map-card">
         <div class="card-header">
-          <div class="card-label">🗺️ Farm Network — Maharashtra (Simulated)</div>
+          <div class="card-label">🗺️ Sensor Node Location (Live GPS)</div>
           <div class="node-count">
             <span class="pulse-dot"></span>
-            <span id="activeNodes">6</span> Active Nodes
+            <span id="activeNodes">1</span> Active Node
           </div>
         </div>
         <div class="map-container" id="farmMap">

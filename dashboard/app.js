@@ -171,240 +171,62 @@ const healthChart = new Chart(healthCtx, {
 });
 
 // ─── Farm Map ───────────────────────────────────────────────
-const farmNodes = [
-  { id: 'N01', name: 'Nashik — Grape Farm', x: 25, y: 22, district: 'Nashik' },
-  { id: 'N02', name: 'Pune — Sugarcane Field', x: 35, y: 52, district: 'Pune' },
-  { id: 'N03', name: 'Nagpur — Orange Orchard', x: 78, y: 18, district: 'Nagpur' },
-  { id: 'N04', name: 'Kolhapur — Rice Paddy', x: 22, y: 72, district: 'Kolhapur' },
-  { id: 'N05', name: 'Aurangabad — Cotton Field', x: 52, y: 30, district: 'Aurangabad' },
-  { id: 'N06', name: 'Solapur — Soybean Farm', x: 55, y: 58, district: 'Solapur' },
-];
+let map;
+let liveMarker;
 
 function initMap() {
   const mapContainer = document.getElementById('farmMap');
-  mapContainer.innerHTML = '';
+  mapContainer.innerHTML = ''; // Clear SVG map
 
-  // Create the SVG map
-  const svgNS = 'http://www.w3.org/2000/svg';
-  const svg = document.createElementNS(svgNS, 'svg');
-  svg.setAttribute('viewBox', '0 0 600 400');
-  svg.setAttribute('width', '100%');
-  svg.setAttribute('height', '100%');
-  svg.style.position = 'absolute';
-  svg.style.top = '0';
-  svg.style.left = '0';
+  // Initialize Leaflet map (default center on India if GPS fails)
+  map = L.map('farmMap', { zoomControl: false }).setView([20.5937, 78.9629], 5);
+  L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-  // Maharashtra outline (simplified polygon)
-  const statePath = document.createElementNS(svgNS, 'path');
-  statePath.setAttribute('d',
-    'M 80,120 L 100,90 L 130,70 L 160,55 L 200,50 L 240,45 ' +
-    'L 280,50 L 310,45 L 340,40 L 380,50 L 410,55 L 440,50 ' +
-    'L 470,60 L 500,70 L 520,90 L 530,120 L 525,150 L 520,180 ' +
-    'L 510,200 L 490,220 L 470,240 L 450,260 L 430,280 ' +
-    'L 400,300 L 370,310 L 340,315 L 310,320 L 280,310 ' +
-    'L 250,300 L 220,290 L 190,280 L 160,290 L 130,300 ' +
-    'L 110,290 L 90,270 L 75,250 L 65,220 L 60,190 ' +
-    'L 65,160 L 70,140 Z'
-  );
-  statePath.setAttribute('fill', 'rgba(34, 197, 94, 0.04)');
-  statePath.setAttribute('stroke', 'rgba(34, 197, 94, 0.2)');
-  statePath.setAttribute('stroke-width', '1.5');
-  svg.appendChild(statePath);
+  // CartoDB Dark Matter base map
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; OpenStreetMap &copy; CARTO',
+    subdomains: 'abcd',
+    maxZoom: 19
+  }).addTo(map);
 
-  // Inner glow path
-  const innerGlow = document.createElementNS(svgNS, 'path');
-  innerGlow.setAttribute('d', statePath.getAttribute('d'));
-  innerGlow.setAttribute('fill', 'none');
-  innerGlow.setAttribute('stroke', 'rgba(34, 197, 94, 0.07)');
-  innerGlow.setAttribute('stroke-width', '6');
-  innerGlow.setAttribute('filter', 'blur(4px)');
-  svg.insertBefore(innerGlow, statePath);
-
-  // Grid lines
-  for (let i = 1; i <= 5; i++) {
-    const hLine = document.createElementNS(svgNS, 'line');
-    hLine.setAttribute('x1', '0'); hLine.setAttribute('y1', i * 66);
-    hLine.setAttribute('x2', '600'); hLine.setAttribute('y2', i * 66);
-    hLine.setAttribute('stroke', 'rgba(255,255,255,0.03)');
-    hLine.setAttribute('stroke-width', '0.5');
-    svg.insertBefore(hLine, innerGlow);
-
-    const vLine = document.createElementNS(svgNS, 'line');
-    vLine.setAttribute('x1', i * 100); vLine.setAttribute('y1', '0');
-    vLine.setAttribute('x2', i * 100); vLine.setAttribute('y2', '400');
-    vLine.setAttribute('stroke', 'rgba(255,255,255,0.03)');
-    vLine.setAttribute('stroke-width', '0.5');
-    svg.insertBefore(vLine, innerGlow);
+  // Get live GPS location
+  if ("geolocation" in navigator) {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        
+        map.setView([lat, lng], 14);
+        
+        liveMarker = L.circleMarker([lat, lng], {
+          radius: 12,
+          fillColor: "#4ade80",
+          color: "#4ade80",
+          weight: 2,
+          opacity: 0.5,
+          fillOpacity: 0.8
+        }).addTo(map);
+        
+        liveMarker.bindPopup("<b style='color:black;'>Live Sensor Node</b><br><span style='color:#333;'>Your GPS Location</span>").openPopup();
+      },
+      (error) => {
+        console.warn("Geolocation denied or failed", error);
+      }
+    );
   }
-
-  // Coordinate labels along edges
-  const coords = [
-    { text: '72°E', x: 80, y: 390 },
-    { text: '74°E', x: 200, y: 390 },
-    { text: '76°E', x: 340, y: 390 },
-    { text: '78°E', x: 470, y: 390 },
-    { text: '80°E', x: 540, y: 390 },
-    { text: '21°N', x: 8, y: 130 },
-    { text: '19°N', x: 8, y: 230 },
-    { text: '17°N', x: 8, y: 330 },
-  ];
-  coords.forEach(c => {
-    const t = document.createElementNS(svgNS, 'text');
-    t.setAttribute('x', c.x);
-    t.setAttribute('y', c.y);
-    t.setAttribute('fill', 'rgba(255,255,255,0.08)');
-    t.setAttribute('font-size', '9');
-    t.setAttribute('font-family', 'JetBrains Mono, monospace');
-    t.textContent = c.text;
-    svg.appendChild(t);
-  });
-
-  // Region label
-  const regionText = document.createElementNS(svgNS, 'text');
-  regionText.setAttribute('x', '300');
-  regionText.setAttribute('y', '195');
-  regionText.setAttribute('fill', 'rgba(255,255,255,0.05)');
-  regionText.setAttribute('font-size', '28');
-  regionText.setAttribute('font-family', 'Inter, sans-serif');
-  regionText.setAttribute('font-weight', '800');
-  regionText.setAttribute('text-anchor', 'middle');
-  regionText.setAttribute('letter-spacing', '8');
-  regionText.textContent = 'MAHARASHTRA';
-  svg.appendChild(regionText);
-
-  // Node positions mapped to SVG viewBox (geographically approximate)
-  const nodePositions = {
-    'N01': { x: 190, y: 110 },   // Nashik
-    'N02': { x: 195, y: 210 },   // Pune
-    'N03': { x: 480, y: 100 },   // Nagpur
-    'N04': { x: 155, y: 295 },   // Kolhapur
-    'N05': { x: 290, y: 130 },   // Aurangabad
-    'N06': { x: 310, y: 230 },   // Solapur
-  };
-
-  // Connection lines between nodes (network visualization)
-  const connections = [
-    ['N01', 'N02'], ['N01', 'N05'],
-    ['N02', 'N06'], ['N02', 'N04'],
-    ['N05', 'N03'], ['N05', 'N06'],
-  ];
-  connections.forEach(([from, to]) => {
-    const p1 = nodePositions[from];
-    const p2 = nodePositions[to];
-    const line = document.createElementNS(svgNS, 'line');
-    line.setAttribute('x1', p1.x); line.setAttribute('y1', p1.y);
-    line.setAttribute('x2', p2.x); line.setAttribute('y2', p2.y);
-    line.setAttribute('stroke', 'rgba(34, 197, 94, 0.1)');
-    line.setAttribute('stroke-width', '1');
-    line.setAttribute('stroke-dasharray', '4 4');
-    svg.appendChild(line);
-  });
-
-  // Create sensor nodes
-  farmNodes.forEach((node) => {
-    const pos = nodePositions[node.id];
-    if (!pos) return;
-
-    // Outer pulse ring
-    const pulseCircle = document.createElementNS(svgNS, 'circle');
-    pulseCircle.setAttribute('cx', pos.x);
-    pulseCircle.setAttribute('cy', pos.y);
-    pulseCircle.setAttribute('r', '12');
-    pulseCircle.setAttribute('fill', 'none');
-    pulseCircle.setAttribute('stroke', '#4ade80');
-    pulseCircle.setAttribute('stroke-width', '1');
-    pulseCircle.setAttribute('opacity', '0.3');
-    pulseCircle.id = `map-pulse-${node.id}`;
-
-    // Animate the pulse
-    const animR = document.createElementNS(svgNS, 'animate');
-    animR.setAttribute('attributeName', 'r');
-    animR.setAttribute('values', '8;20;8');
-    animR.setAttribute('dur', `${3 + Math.random() * 2}s`);
-    animR.setAttribute('repeatCount', 'indefinite');
-    pulseCircle.appendChild(animR);
-
-    const animOp = document.createElementNS(svgNS, 'animate');
-    animOp.setAttribute('attributeName', 'opacity');
-    animOp.setAttribute('values', '0.4;0;0.4');
-    animOp.setAttribute('dur', `${3 + Math.random() * 2}s`);
-    animOp.setAttribute('repeatCount', 'indefinite');
-    pulseCircle.appendChild(animOp);
-
-    svg.appendChild(pulseCircle);
-
-    // Main node circle
-    const circle = document.createElementNS(svgNS, 'circle');
-    circle.setAttribute('cx', pos.x);
-    circle.setAttribute('cy', pos.y);
-    circle.setAttribute('r', '6');
-    circle.setAttribute('fill', '#4ade80');
-    circle.setAttribute('stroke', 'rgba(0,0,0,0.3)');
-    circle.setAttribute('stroke-width', '2');
-    circle.setAttribute('cursor', 'pointer');
-    circle.id = `map-node-${node.id}`;
-    svg.appendChild(circle);
-
-    // District label
-    const label = document.createElementNS(svgNS, 'text');
-    label.setAttribute('x', pos.x);
-    label.setAttribute('y', pos.y + 20);
-    label.setAttribute('fill', 'rgba(255,255,255,0.5)');
-    label.setAttribute('font-size', '10');
-    label.setAttribute('font-family', 'Inter, sans-serif');
-    label.setAttribute('font-weight', '600');
-    label.setAttribute('text-anchor', 'middle');
-    label.textContent = node.district;
-    svg.appendChild(label);
-
-    // Health value label (below district name)
-    const healthLabel = document.createElementNS(svgNS, 'text');
-    healthLabel.setAttribute('x', pos.x);
-    healthLabel.setAttribute('y', pos.y + 32);
-    healthLabel.setAttribute('fill', 'rgba(255,255,255,0.3)');
-    healthLabel.setAttribute('font-size', '9');
-    healthLabel.setAttribute('font-family', 'JetBrains Mono, monospace');
-    healthLabel.setAttribute('text-anchor', 'middle');
-    healthLabel.id = `map-label-health-${node.id}`;
-    healthLabel.textContent = 'Score: --';
-    svg.appendChild(healthLabel);
-
-    // Hover tooltip using SVG title
-    const title = document.createElementNS(svgNS, 'title');
-    title.textContent = `${node.id} — ${node.name}`;
-    circle.appendChild(title);
-  });
-
-  mapContainer.appendChild(svg);
 }
 
 function updateMapNodes(currentHealth) {
-  farmNodes.forEach((node, index) => {
-    const nodeEl = document.getElementById(`map-node-${node.id}`);
-    const pulseEl = document.getElementById(`map-pulse-${node.id}`);
-    const healthLabel = document.getElementById(`map-label-health-${node.id}`);
-    if (!nodeEl) return;
+  if (!liveMarker) return;
+  
+  let color = '#4ade80';
+  if (currentHealth < 25) color = '#f87171';
+  else if (currentHealth < 50) color = '#fb923c';
+  else if (currentHealth < 75) color = '#fbbf24';
 
-    // First node uses real data, others simulate variation
-    let health;
-    if (index === 0) {
-      health = currentHealth;
-    } else {
-      // Simulated variation around the real health value
-      const offset = Math.sin(Date.now() / (3000 + index * 1000)) * 15 + (index * 5 - 15);
-      health = Math.max(0, Math.min(100, currentHealth + offset));
-    }
-
-    // Color based on health
-    let color;
-    if (health >= 75) color = '#4ade80';
-    else if (health >= 50) color = '#fbbf24';
-    else if (health >= 25) color = '#fb923c';
-    else color = '#f87171';
-
-    nodeEl.setAttribute('fill', color);
-    if (pulseEl) pulseEl.setAttribute('stroke', color);
-    if (healthLabel) healthLabel.textContent = `Score: ${Math.round(health)}`;
+  liveMarker.setStyle({
+    fillColor: color,
+    color: color
   });
 }
 

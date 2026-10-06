@@ -7,15 +7,15 @@
 ## The Prompt
 
 **Topic:**  Open Soil Health Monitoring Network
-**Goal:** Create a 10-slide pitch deck for an open innovation ideathon. 
+**Goal:** Create an 11-slide pitch deck for an open innovation ideathon. 
 **Aesthetic Theme:** Clean, modern, and data-driven. Dark theme (slate/navy background like #0f172a) with vibrant green (#4ade80) and earth-tone gold (#fbbf24) accents. Use glassmorphism effects for cards and minimal text per slide. High-contrast typography using Inter or Outfit fonts.
 
-Please generate a 10-slide presentation using the following structure, content, and speaker notes:
+Please generate an 11-slide presentation using the following structure, content, and speaker notes:
 
 ### Slide 1: Title Slide
 *   **Title:** KrishiSense
 *   **Subtitle:** Open Soil Health Monitoring Network
-*   **Tagline:** Real-time soil intelligence. ₹80 per node. Open for all.
+*   **Tagline:** Real-time soil intelligence. ₹500 per node. Open for all.
 *   **Visual Elements:** Subtle topographic map pattern in the background. Glowing pulse dots representing sensor nodes.
 *   **Speaker Notes:** "Good [morning/afternoon]. We are Team [Name]. 14 crore Indian farming families depend on their soil for survival, but they have almost zero real-time information about its health. Today, we are going to change that."
 
@@ -34,13 +34,13 @@ Please generate a 10-slide presentation using the following structure, content, 
 *   **Speaker Notes:** "Existing solutions don't work for the 86% of farmers who own less than one hectare. Government cards are free but take months to arrive. Commercial IoT platforms cost upwards of ₹15,000 a year. There is a massive gap for a real-time, ultra-affordable solution."
 
 ### Slide 4: Introducing KrishiSense
-*   **Headline:** The ₹80 Soil Scientist
+*   **Headline:** The ₹500 Soil Scientist
 *   **Three Pillars:** 
-    1.  *Ultra-Cheap Hardware:* ₹80 sensor node measuring moisture, temp, and humidity.
+    1.  *Ultra-Cheap Hardware:* ₹500 sensor node (includes ESP32 microcontroller: ~₹300, Capacitive Moisture: ~₹100, DHT11: ~₹80, Misc: ~₹20).
     2.  *Live Dashboard:* Zero-literacy visual health scores and alerts.
     3.  *Open Ecosystem:* Open-source hardware and open data API.
 *   **Visual:** Side-by-side of the physical hardware node and the clean web dashboard.
-*   **Speaker Notes:** "Enter KrishiSense. It’s an ₹80 sensor node—less than the cost of a bag of fertilizer. It connects to a live dashboard that translates complex data into simple colors: Green means good, Red means act now. And most importantly, it is completely open-source."
+*   **Speaker Notes:** "Enter KrishiSense. It’s a ₹500 sensor node—a realistic, affordable cost including the microcontroller—which is still cheaper than a single bag of premium fertilizer. It connects to a live dashboard that translates complex data into simple colors: Green means good, Red means act now. And most importantly, it is completely open-source."
 
 ### Slide 5: How It Works (The Science)
 *   **Headline:** Data to Action in 2 Seconds
@@ -62,20 +62,27 @@ Please generate a 10-slide presentation using the following structure, content, 
     *   *Tier 3 (Enterprise):* B2B/B2G deals (Fertilizer companies, Crop Insurers, Govt Agriculture Departments).
 *   **Speaker Notes:** "How do we make money if the hardware is open? The data is the product. Open access builds the largest real-time soil dataset in India. We monetize through B2B deals—crop insurers pay for field data to process claims faster, and fertilizer companies pay for precision regional insights."
 
-### Slide 8: The Impact & Competitive Moat
-*   **Headline:** Triple Bottom Line
-*   **Impact:** 15-20% yield improvement, 20-40% water savings (improving irrigation efficiency saves billions of cubic meters of groundwater).
-*   **The Moat:** Self-reinforcing open-source loop (More open nodes = larger dataset = more valuable API = more partners deploying nodes).
-*   **Speaker Notes:** "The impact is massive. By telling farmers exactly when to irrigate, we can save up to 40% of groundwater. And our competitive advantage is our open-source loop. Proprietary companies have to sell expensive hardware. We let the community deploy the hardware, and we build the data platform."
+### Slide 8: Triple Bottom Line Research & Impact
+*   **Headline:** Proven Impact: Backed by Research
+*   **Economic (Profit):** Based on ICAR and FAO studies, precision agriculture and soil health monitoring yield a 15-20% average crop improvement while reducing excess fertilizer costs by ₹2,000-₹5,000 per acre annually.
+*   **Environmental (Planet):** Supported by IWMI (International Water Management Institute) data, moisture-triggered irrigation reduces agricultural water usage by 20-40%. Preventing urea runoff mitigates soil acidification and groundwater nitrate contamination.
+*   **Social (People):** Aligned with ICRISAT frameworks for smallholder empowerment. Democratized open-source data builds cooperative resilience against climate change for marginalized farming communities.
+*   **Speaker Notes:** "We didn't just guess these numbers; they are grounded in research. ICAR and FAO studies confirm that precision agriculture boosts yields by up to 20% while saving farmers thousands on fertilizer. IWMI data shows we can cut water use by 40%. And socially, following ICRISAT's models, we know that putting open data directly into the hands of smallholders empowers entire communities."
 
-### Slide 9: Roadmap & The Ask
+### Slide 9: Competitive Moat
+*   **Headline:** The Open Source Advantage
+*   **The Moat:** Self-reinforcing open-source loop (More open nodes = larger dataset = more valuable API = more partners deploying nodes).
+*   **Comparison:** Proprietary companies have to sell expensive hardware. We let the community deploy the hardware, and we build the data platform.
+*   **Speaker Notes:** "Our competitive advantage is our open-source loop. Proprietary companies have to sell expensive hardware. We let the community deploy the hardware, and we build the data platform. More nodes mean better data, which brings in more partners."
+
+### Slide 10: Roadmap & The Ask
 *   **Headline:** From Prototype to Pan-India Platform
 *   **Roadmap:** Phase 1 (USB Prototype) → Phase 2 (ESP32 Wi-Fi Pilots) → Phase 3 (LoRa mesh networks for 5km rural range).
 *   **The Ask:** Introductions to FPOs (Farmer Producer Organizations) for field pilots, and cloud credits for the data platform.
 *   **Speaker Notes:** "Today, you see our working Phase 1 prototype. In 6 months, we move to Wi-Fi pilots, and eventually to LoRa mesh networks that require no cellular towers. Today, we are asking for your support to connect us with Farmer Producer Organizations to run our first 10-node field pilot."
 
-### Slide 10: Q&A
+### Slide 11: Q&A
 *   **Headline:** Questions & Answers
-*   **Closing Quote:** "Every farmer deserves a soil scientist. We're building one for ₹80."
+*   **Closing Quote:** "Every farmer deserves a soil scientist. We're building one for ₹500."
 *   **Contact Info:** [Team Name], GitHub Link, Contact Email.
-*   **Speaker Notes:** "Every farmer in India deserves a soil scientist. We can't put a scientist in every field, but we can put an ₹80 sensor in every field to guide their decisions. Thank you, and we'd love to answer your questions."
+*   **Speaker Notes:** "Every farmer in India deserves a soil scientist. We can't put a scientist in every field, but we can put a ₹500 sensor in every field to guide their decisions. Thank you, and we'd love to answer your questions."
